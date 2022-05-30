@@ -62,7 +62,7 @@ class CandidateSubscriber implements EventSubscriberInterface
 
         $randomNumber = rand(1000,9999);
 
-        $createdCandidateId = $prefix.$shortName.$randomNumber;
+        $createdCandidateId = strtoupper($prefix.$shortName.$randomNumber);
         return $createdCandidateId;
     }
 
