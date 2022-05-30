@@ -8,6 +8,7 @@ use App\Dto\CandidateToUserInputDto;
 use App\Repository\CandidateRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ApiResource(
     collectionOperations:[
@@ -32,10 +33,12 @@ class Candidate
 
     #[ORM\Column(type: 'string', length: 255)]
     #[Groups("candidate:write")]
+    #[Assert\Email]
     private $email;
 
     #[ORM\Column(type: 'string', length: 255)]
     #[Groups("candidate:write")]
+    #[Assert\NotBlank]
     private $name;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
@@ -124,7 +127,6 @@ class Candidate
 
     public function setCadidateId(string $cadidateId): self
     {
-        dd($cadidateId);
         $this->cadidateId = $cadidateId;
 
         return $this;
