@@ -32,14 +32,14 @@ class CandidateSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $candidateId = $this->createCandidateId($candidate->getName());
+        $candidateId = $this->createUniqueCandidateId($candidate->getName());
         $candidate->setCadidateId($candidateId);
 
     }
 
-    private function createCandidateId($name): string
+    private function createUniqueCandidateId($name): string
     {
-        $cadidateId = $this->createId($name);
+        $cadidateId = $this->getCanditureId($name);
         $candidate = $this->repository->findOneBy(['cadidateId' =>  $cadidateId]);
         if ($candidate) {
             $this->createCandidateId($name);
@@ -48,9 +48,9 @@ class CandidateSubscriber implements EventSubscriberInterface
         return $cadidateId;
     }
 
-    private function createId($name): string
+    private function getCanditureId($name): string
     {
-        $prefix = "EPL_";
+        $prefix = "EPL";
 
         $explodedName = explode(" ",$name);
         if(sizeof($explodedName)>1){
