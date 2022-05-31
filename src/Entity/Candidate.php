@@ -108,7 +108,7 @@ class Candidate
         return $this;
     }
 
-    public function isIsPromoted(): ?bool
+    public function getIsPromoted(): ?bool
     {
         return $this->isPromoted;
     }
