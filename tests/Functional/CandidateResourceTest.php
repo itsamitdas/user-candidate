@@ -74,4 +74,24 @@ class CandidateResourceTest extends ApiTestCase
         $this->assertResponseIsSuccessful();
     }
 
+    public function testCandidateToUser()
+    {
+        $candidateArray = [];
+
+        for($i = 0;$i<=3;$i++){
+            $candidateData = CandidateData::all();
+            $responseCreate = static::createClient()->request('POST', '/api/candidates',[
+                'json' => $candidateData
+            ]);
+            $createdCandidate = json_decode($responseCreate->getContent());
+            $candidateArray[$i] = $createdCandidate->id;
+        }
+
+        static::createClient()->request('POST', '/api/candidates/to/user',[
+            'json' => ["candidates" => $candidateArray]
+        ]);
+
+        $this->assertResponseIsSuccessful();
+    }
+
 }
