@@ -4,17 +4,17 @@
 namespace App\Factory\DataSet;
 
 
-class UserData implements DataSetInterface
+class CandidateData
 {
     use DataSetTrait;
+
 
     public static function minimum(): array
     {
         return [
             "email" => self::faker()->email(),
-            "roles" => ["ROLE_EMPOLYEE"],
-            "password" => self::faker()->password(),
-            "name" => self::faker()->name()
+            "name" => self::faker()->name(),
+            "isPromoted" => 0
         ];
     }
 
