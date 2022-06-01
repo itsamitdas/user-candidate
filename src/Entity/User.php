@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -49,6 +51,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups('user:read')]
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $address;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Leave::class, orphanRemoval: true)]
+    private $leaves;
+
+    public function __construct()
+    {
+        $this->leaves = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -152,6 +162,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setAddress(?string $address): self
     {
         $this->address = $address;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Leave>
+     */
+    public function getLeaves(): Collection
+    {
+        return $this->leaves;
+    }
+
+    public function addLeaf(Leave $leaf): self
+    {
+        if (!$this->leaves->contains($leaf)) {
+            $this->leaves[] = $leaf;
+            $leaf->setUserId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLeaf(Leave $leaf): self
+    {
+        if ($this->leaves->removeElement($leaf)) {
+            // set the owning side to null (unless already changed)
+            if ($leaf->getUserId() === $this) {
+                $leaf->setUserId(null);
+            }
+        }
 
         return $this;
     }
