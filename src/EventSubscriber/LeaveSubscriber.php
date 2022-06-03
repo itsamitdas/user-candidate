@@ -52,7 +52,7 @@ class LeaveSubscriber implements EventSubscriberInterface
     private function setToken(Leave $leave): Leave
     {
         $token = $this->createUniqueToken();
-        return $leave->setVerifyToken($token);
+        return $leave->setToken($token);
     }
 
     private function createUniqueToken(): string
@@ -60,7 +60,7 @@ class LeaveSubscriber implements EventSubscriberInterface
         $charecterSet = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $token = md5(substr(str_shuffle($charecterSet), 0, 6));
 
-        $leave = $this->leaveRepository->findOneBy(['verifyToken' =>  $token]);
+        $leave = $this->leaveRepository->findOneBy(['token' =>  $token]);
         if ($leave) {
             $this->createUniqueToken();
         }
@@ -76,7 +76,7 @@ class LeaveSubscriber implements EventSubscriberInterface
             ->htmlTemplate("email/leaveApplication.html.twig")
             ->context([
                 "leave" => $leave,
-                "token" => $leave->getVerifyToken()
+                "token" => $leave->getToken()
             ]);
 
         $this->mailer->send($email);

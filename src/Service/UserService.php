@@ -31,9 +31,7 @@ class UserService
         $this->entityManager->persist($user);
         $this->entityManager->flush();
 
-        if($user){
-            $this->sendMail($user,$plainPassword);
-        }
+        $this->sendMail($user,$plainPassword);
 
         return $user;
     }

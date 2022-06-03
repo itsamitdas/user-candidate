@@ -33,7 +33,7 @@ class LeaveManageController extends AbstractController
     #[Route('/leave/reject/{token}', name: 'app_leave_reject')]
     public function leaveReject($token): Response
     {
-        $leave = $this->leaveService->isValidRequest($token);
+        $leave = $this->leaveService->getLeaveByToken($token);
 
         if($leave){
             $this->leaveService->leaveReject($leave);

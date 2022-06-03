@@ -36,7 +36,6 @@ class Leave
     private $toDate;
 
     #[ORM\Column(type: 'smallint')]
-    #[Groups("leave:write")]
     private $status = 0; //0=applied,1=approved,2=rejected
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'leaves')]
@@ -51,7 +50,7 @@ class Leave
     private $remerks;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private $verifyToken;
+    private $token;
 
 
     public function getId(): ?int
@@ -155,14 +154,14 @@ class Leave
         return $this;
     }
 
-    public function getVerifyToken(): ?string
+    public function getToken(): ?string
     {
-        return $this->verifyToken;
+        return $this->token;
     }
 
-    public function setVerifyToken(?string $verifyToken): self
+    public function setToken(?string $token): self
     {
-        $this->verifyToken = $verifyToken;
+        $this->token = $token;
 
         return $this;
     }

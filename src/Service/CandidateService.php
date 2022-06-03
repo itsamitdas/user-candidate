@@ -3,6 +3,7 @@
 
 namespace App\Service;
 
+use App\Entity\Candidate;
 use App\Repository\CandidateRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
@@ -13,7 +14,7 @@ class CandidateService
     {
     }
 
-    public function setCandidatesToUsers($candidateIds){
+    public function createUsers($candidateIds){
         $users = new ArrayCollection();
         foreach ($candidateIds as $candidateId) {
             $user = $this->setCandidateToUser($candidateId);
@@ -24,19 +25,28 @@ class CandidateService
         return $users;
     }
 
-    private function setCandidateToUser($candidateId){
-        $fetchCadidate = $this->candidateRepository->findOneBy(["id"=>$candidateId,'isPromoted'=>0]);
-        if(!$fetchCadidate){
+    private function setCandidateToUser($id){
+
+        $candidate = $this->fetchNonPromotedCandidateById($id);
+        if (!$candidate){
             return ;
         }
-        if(!$user = $this->userService->createUser($fetchCadidate)){
-            return ;
-        };
+        $user = $this->userService->createUser($candidate);
+        $this->updateCandidatePromotedStatus($candidate);
+        return $user;
+    }
 
-        $fetchCadidate->setIsPromoted(1);
-        $this->entityManager->persist($fetchCadidate);
+    private function fetchNonPromotedCandidateById($id): ?Candidate
+    {
+        return $this->candidateRepository->findOneBy(["id"=>$id,'isPromoted'=>0]);
+    }
+
+    private function updateCandidatePromotedStatus(Candidate $candidate): Candidate
+    {
+        $candidate->setIsPromoted(1);
+        $this->entityManager->persist($candidate);
         $this->entityManager->flush();
 
-        return $user;
+        return $candidate;
     }
 }

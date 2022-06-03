@@ -17,7 +17,7 @@ class LeaveService
 
     public function getLeaveByToken(string $token): ?Leave
     {
-        return $this->leaveRepository->findOneby(['verifyToken' => $token]);
+        return $this->leaveRepository->findOneby(['token' => $token]);
     }
 
     public function leaveApprove(Leave $leave): Leave
@@ -25,7 +25,7 @@ class LeaveService
         $leave->setStatus(1)
             ->setRemerks("Approved")
             ->setVerifyFromIp($_SERVER['HTTP_USER_AGENT'])
-            ->setVerifyToken("");
+            ->setToken("");
 
         $this->entityManager->persist($leave);
         $this->entityManager->flush();
@@ -39,7 +39,7 @@ class LeaveService
         $leave->setStatus(2)
             ->setRemerks("Rejected")
             ->setVerifyFromIp($_SERVER['HTTP_USER_AGENT'])
-            ->setVerifyToken("");
+            ->setToken("");
 
         $this->entityManager->persist($leave);
         $this->entityManager->flush();
