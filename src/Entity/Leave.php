@@ -36,15 +36,23 @@ class Leave
     private $toDate;
 
     #[ORM\Column(type: 'smallint')]
+    #[Groups("leave:write")]
     private $status = 0; //0=applied,1=approved,2=rejected
-
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private $rejectReason;
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'leaves')]
     #[ORM\JoinColumn(nullable: false)]
     #[Groups("leave:write")]
     private $user;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $verifyFromIp;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $remerks;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $verifyToken;
+
 
     public function getId(): ?int
     {
@@ -111,18 +119,6 @@ class Leave
         return $this;
     }
 
-    public function getRejectReason(): ?string
-    {
-        return $this->rejectReason;
-    }
-
-    public function setRejectReason(?string $rejectReason): self
-    {
-        $this->rejectReason = $rejectReason;
-
-        return $this;
-    }
-
     public function getUser(): ?User
     {
         return $this->user;
@@ -134,4 +130,41 @@ class Leave
 
         return $this;
     }
+
+    public function getVerifyFromIp(): ?string
+    {
+        return $this->verifyFromIp;
+    }
+
+    public function setVerifyFromIp(?string $verifyFromIp): self
+    {
+        $this->verifyFromIp = $verifyFromIp;
+
+        return $this;
+    }
+
+    public function getRemerks(): ?string
+    {
+        return $this->remerks;
+    }
+
+    public function setRemerks(?string $remerks): self
+    {
+        $this->remerks = $remerks;
+
+        return $this;
+    }
+
+    public function getVerifyToken(): ?string
+    {
+        return $this->verifyToken;
+    }
+
+    public function setVerifyToken(?string $verifyToken): self
+    {
+        $this->verifyToken = $verifyToken;
+
+        return $this;
+    }
+
 }

@@ -40,8 +40,8 @@ class UserService
 
     private function createPassword(): string
     {
-        $carecterSet = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        $password = substr(str_shuffle($carecterSet), 0, 6);
+        $charecterSet = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $password = substr(str_shuffle($charecterSet), 0, 6);
         return $password;
     }
 

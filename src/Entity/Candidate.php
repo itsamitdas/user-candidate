@@ -16,7 +16,7 @@ use Symfony\Component\Validator\Constraints as Assert;
         'post',
         'candidates/to/user'=>[
             'method' => 'post',
-            'path' => 'candidates/to/user',
+            'path' => 'candidates/user',
             'controller' => CandidateToUserController::class,
             'input' => CandidateToUserInputDto::class,
         ]

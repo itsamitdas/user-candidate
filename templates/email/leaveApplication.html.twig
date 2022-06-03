@@ -1,7 +1,15 @@
 <html>
+    <body>
+        Leave request from : <b>{{ leave.getUser.getName }}</b> <br/>
+        Leave For : <b>{{ leave.Title }}</b><br/>
+        Leave : From <b>{{ leave.getFromDate|date('d-m-Y') }}</b> to <b>{{ leave.getToDate|date('d-m-Y') }}</b>
 
-    Leave request from : <b>{{ leave.getUser.getName }}</b> <br/>
-    Leave For : <b>{{ leave.Title }}</b><br/>
-    Leave : From <b>{{ leave.getFromDate|date('d-m-Y') }}</b> to <b>{{ leave.getToDate|date('d-m-Y') }}</b>
+        <br/><br/><br/>
 
+        <a style="color: green" href="{{ url('app_leave_approve', {token: token}) }}">Leave Approve</a>
+        <br/><br/><br/>
+
+        <a style="color: red" href="{{ url('app_leave_reject', {token: token}) }}">Leave Reject</a>
+
+    </body>
 </html>

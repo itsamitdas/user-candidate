@@ -4,6 +4,7 @@
 namespace App\EventSubscriber;
 
 
+use App\Repository\LeaveRepository;
 use Doctrine\Bundle\DoctrineBundle\EventSubscriber\EventSubscriberInterface;
 use App\Entity\Leave;
 use Doctrine\ORM\Events;
@@ -15,17 +16,29 @@ use Symfony\Component\Mailer\MailerInterface;
 class LeaveSubscriber implements EventSubscriberInterface
 {
 
-    public function __construct(private MailerInterface $mailer)
+    public function __construct(private MailerInterface $mailer, private LeaveRepository $leaveRepository)
     {
     }
 
     public function getSubscribedEvents()
     {
         return [
+            Events::prePersist,
             Events::postPersist,
         ];
     }
 
+
+    public function prePersist(LifecycleEventArgs $args): void
+    {
+        $entity = $args->getObject();
+
+        if(!$entity instanceof Leave){
+            return;
+        }
+
+        $this->setToken($entity);
+    }
 
     public function postPersist(LifecycleEventArgs $args): void
     {
@@ -36,8 +49,26 @@ class LeaveSubscriber implements EventSubscriberInterface
         $this->sendMail($leave);
     }
 
+    private function setToken(Leave $leave): Leave
+    {
+        $token = $this->createUniqueToken();
+        return $leave->setVerifyToken($token);
+    }
+
+    private function createUniqueToken(): string
+    {
+        $charecterSet = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $token = md5(substr(str_shuffle($charecterSet), 0, 6));
+
+        $leave = $this->leaveRepository->findOneBy(['verifyToken' =>  $token]);
+        if ($leave) {
+            $this->createUniqueToken();
+        }
+
+        return $token;
+    }
+
     private function sendMail(Leave $leave){
-        dump($leave->getUser()->getName());
         $email = (new TemplatedEmail())
             ->from($leave->getUser()->getEmail())
             ->to("hr@einzigtech.com")
@@ -45,7 +76,9 @@ class LeaveSubscriber implements EventSubscriberInterface
             ->htmlTemplate("email/leaveApplication.html.twig")
             ->context([
                 "leave" => $leave,
+                "token" => $leave->getVerifyToken()
             ]);
 
         $this->mailer->send($email);
-    }}
+    }
+}
