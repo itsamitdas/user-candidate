@@ -6,9 +6,11 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\LeaveRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ApiResource(
-    denormalizationContext:['groups'=>["leave:write"]]
+    denormalizationContext:['groups'=>["leave:write"]],
+    normalizationContext: ['groups'=>['leave:read']]
 )]
 #[ORM\Entity(repositoryClass: LeaveRepository::class)]
 #[ORM\Table(name: '`leave`')]
@@ -17,30 +19,34 @@ class Leave
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
+    #[Groups('leave:read')]
     private $id;
 
     #[ORM\Column(type: 'string', length: 255)]
-    #[Groups("leave:write")]
+    #[Groups(["leave:write", "leave:read"])]
     private $title;
 
     #[ORM\Column(type: 'string', length: 255)]
-    #[Groups("leave:write")]
+    #[Groups(["leave:write", "leave:read"])]
+    #[Assert\Choice(['Full-Day','Half-Day'])]
     private $leaveType = "Full-Day";
 
     #[ORM\Column(type: 'date')]
-    #[Groups("leave:write")]
+    #[Groups(["leave:write", "leave:read"])]
     private $fromDate;
 
     #[ORM\Column(type: 'date')]
-    #[Groups("leave:write")]
+    #[Groups(["leave:write", "leave:read"])]
     private $toDate;
 
-    #[ORM\Column(type: 'smallint')]
-    private $status = 0; //0=applied,1=approved,2=rejected
+    #[ORM\Column(type: 'string', length: 255)]
+    #[Assert\Choice(['PENDING','APPROVE','REJECTED'])]
+    #[Groups("leave:read")]
+    private $status = "PENDING";
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'leaves')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups("leave:write")]
+    #[Groups(["leave:write", "leave:read"])]
     private $user;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
@@ -106,12 +112,12 @@ class Leave
         return $this;
     }
 
-    public function getStatus(): ?int
+    public function getStatus(): ?string
     {
         return $this->status;
     }
 
-    public function setStatus(int $status): self
+    public function setStatus(string $status): self
     {
         $this->status = $status;
 

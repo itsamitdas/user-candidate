@@ -37,6 +37,7 @@ class UserSubscriber implements EventSubscriberInterface
     public function preUpdate(LifecycleEventArgs $args): void
     {
         $user = $args->getObject();
+        dd($args);
         if(!$user instanceof User){
             return;
         }
