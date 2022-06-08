@@ -15,6 +15,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ApiResource(
     normalizationContext: ["groups" => ["user:read"]],
+    denormalizationContext: ["groups" => ["user:write"]]
 )]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
@@ -23,32 +24,33 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    #[Groups('user:read')]
+    #[Groups("user:read")]
     private $id;
 
     #[ORM\Column(type: 'string', length: 180, unique: true)]
-    #[Groups('user:read')]
+    #[Groups(["user:read", "user:write"])]
     #[Assert\Email]
     private $email;
 
     #[Groups('user:read')]
     #[ORM\Column(type: 'json')]
-    private $roles = [];
+    private $roles = ["USER_EMPLOYEE"];
 
     #[ORM\Column(type: 'string')]
     #[Assert\NotBlank]
+    #[Groups("user:write")]
     private $password;
 
-    #[Groups('user:read')]
+    #[Groups(["user:read","user:write"])]
     #[ORM\Column(type: 'string', length: 255)]
     #[Assert\NotBlank]
     private $name;
 
-    #[Groups('user:read')]
+    #[Groups(["user:read","user:write"])]
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $mobile;
 
-    #[Groups('user:read')]
+    #[Groups(["user:read","user:write"])]
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $address;
 

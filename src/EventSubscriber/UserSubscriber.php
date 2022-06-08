@@ -3,10 +3,8 @@
 
 namespace App\EventSubscriber;
 
-
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\EventSubscriber\EventSubscriberInterface;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Events;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -15,7 +13,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 class UserSubscriber implements EventSubscriberInterface
 {
 
-    public function __construct(private EntityManagerInterface $entityManager, private UserPasswordHasherInterface $passwordHasher)
+    public function __construct(private UserPasswordHasherInterface $passwordHasher)
     {
     }
 
@@ -30,35 +28,30 @@ class UserSubscriber implements EventSubscriberInterface
     public function prePersist(LifecycleEventArgs $args): void
     {
         $entity = $args->getObject();
-
         if(!$entity instanceof User){
             return;
         }
-
-        $this->doPasswordHash($entity);
+        $this->createHashPassword($entity);
     }
 
     public function preUpdate(LifecycleEventArgs $args): void
     {
-        $entity = $args->getObject();
-
-        if(!$entity instanceof User){
+        $user = $args->getObject();
+        if(!$user instanceof User){
             return;
         }
-
-        $this->doPasswordHash($entity);
+        $this->createHashPassword($user);
     }
 
 
-    private function doPasswordHash(User $user){
-
+    private function createHashPassword(User $user){
         if($user->getPassword()){
             $user->setPassword(
                 $this->passwordHasher->hashPassword($user,$user->getPassword())
             );
             $user->eraseCredentials();
         }
-
     }
+
 
 }

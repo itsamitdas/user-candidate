@@ -6,14 +6,16 @@ namespace App\Service;
 
 use App\Entity\Candidate;
 use App\Entity\User;
-use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\MailerInterface;
 
 class UserService
 {
-    public function __construct(Private EntityManagerInterface $entityManager, Private UserRepository $userRepository, private MailerInterface $mailer)
+    public const OFFSET = 0;
+    public const LENGTH = 6;
+
+    public function __construct(Private EntityManagerInterface $entityManager, private MailerInterface $mailer)
     {
     }
 
@@ -39,7 +41,7 @@ class UserService
     private function createPassword(): string
     {
         $charecterSet = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        $password = substr(str_shuffle($charecterSet), 0, 6);
+        $password = substr(str_shuffle($charecterSet), self::OFFSET, self::LENGTH);
         return $password;
     }
 
@@ -49,7 +51,7 @@ class UserService
             ->from("its.amit.das@gmail.com")
             ->to($user->getEmail())
             ->subject("Test for email send")
-            ->htmlTemplate("email/userCredentialMailTemplate.html.twig")
+            ->htmlTemplate("email/user_credential_mail_template.html.twig")
             ->context([
                 "user" => $user,
                 "plainPassword" => $plainPassword

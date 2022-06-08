@@ -15,6 +15,8 @@ use Symfony\Component\Mailer\MailerInterface;
 
 class LeaveSubscriber implements EventSubscriberInterface
 {
+    public const OFFSET = 0;
+    public const LENGTH = 6;
 
     public function __construct(private MailerInterface $mailer, private LeaveRepository $leaveRepository)
     {
@@ -58,7 +60,7 @@ class LeaveSubscriber implements EventSubscriberInterface
     private function createUniqueToken(): string
     {
         $charecterSet = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        $token = md5(substr(str_shuffle($charecterSet), 0, 6));
+        $token = md5(substr(str_shuffle($charecterSet), self::OFFSET, self::LENGTH));
 
         $leave = $this->leaveRepository->findOneBy(['token' =>  $token]);
         if ($leave) {
@@ -73,7 +75,7 @@ class LeaveSubscriber implements EventSubscriberInterface
             ->from($leave->getUser()->getEmail())
             ->to("hr@einzigtech.com")
             ->subject("Test for email send")
-            ->htmlTemplate("email/leaveApplication.html.twig")
+            ->htmlTemplate("email/leave_application_mail_template.html.twig")
             ->context([
                 "leave" => $leave,
                 "token" => $leave->getToken()

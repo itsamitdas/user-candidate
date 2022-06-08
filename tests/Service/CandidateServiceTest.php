@@ -4,8 +4,6 @@
 namespace App\Tests\Service;
 
 
-use App\Entity\Candidate;
-use App\Factory\DataSet\CandidateData;
 use App\Repository\CandidateRepository;
 use App\Repository\UserRepository;
 use App\Service\CandidateService;

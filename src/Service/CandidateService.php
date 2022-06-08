@@ -38,12 +38,12 @@ class CandidateService
 
     private function fetchNonPromotedCandidateById($id): ?Candidate
     {
-        return $this->candidateRepository->findOneBy(["id"=>$id,'isPromoted'=>0]);
+        return $this->candidateRepository->findOneBy(["id"=>$id,'isPromoted'=>false]);
     }
 
     private function updateCandidatePromotedStatus(Candidate $candidate): Candidate
     {
-        $candidate->setIsPromoted(1);
+        $candidate->setIsPromoted(true);
         $this->entityManager->persist($candidate);
         $this->entityManager->flush();
 
